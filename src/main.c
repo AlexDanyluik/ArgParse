@@ -10,10 +10,11 @@ int factorial(int x) {
 }
 
 int main(int argc, char* const argv[]) {
-    ArgParse parse = newArgParse(3, "Factorial");
-    add_flag(&parse, "-v", "--version", t__int, 0);
-    add_flag(&parse, "-n", "--number", t__int, 1);
-    add_flag(&parse, "-h", "--help", t__int, 0);
+    ArgParse parse = newArgParse(4, "Factorial");
+    add_flag(&parse, "-v", "--version", T_INT, 0);
+    add_flag(&parse, "-n", "--number", T_INT, 1);
+    add_flag(&parse, "-a", "--name", T_STRING, 1);
+    add_flag(&parse, "-h", "--help", T_INT, 0);
     Flag* flag = args_parse(&parse, argc, argv);
     if(flag == NULL) {
         delArgParse(parse);
@@ -24,8 +25,10 @@ int main(int argc, char* const argv[]) {
         printf("Version 0.0.1\n");
     else if(strcmp("-h", flag->short_form) == 0)
         display(&parse);
+    else if(strcmp("-a", flag->short_form) == 0)
+        printf("%s\n", flag->args[0].dv_string);
     else
-        printf("%d\n", factorial(flag->args[0].x));
+        printf("%d\n", factorial(flag->args[0].dv_int));
     delArgParse(parse);
     return 0;
 }

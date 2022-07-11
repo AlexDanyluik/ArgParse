@@ -3,13 +3,45 @@
 #include <string.h>
 #include <stdio.h>
 
+const int MAX_STRING = 255;
+
 union DataValue* alloc_fargs(enum DataType dtype, int nargs) {
     size_t size = 0;
     switch(dtype) {
-        case t__int:
+        case T_CHAR:
+            size = sizeof(char);
+            break;
+        case T_INT:
             size = sizeof(int);
             break;
-    }
+        case T_UCHAR:
+            size = sizeof(unsigned char);
+            break;
+        case T_SHORT:
+            size = sizeof(short);
+            break;
+        case T_USHORT:
+            size = sizeof(unsigned short);
+            break;
+        case T_UINT:
+            size = sizeof(unsigned int);
+            break;
+        case T_LONG:
+            size = sizeof(long);
+            break;
+        case T_ULONG:
+            size = sizeof(unsigned long);
+            break;
+        case T_FLOAT:
+            size = sizeof(float);
+            break;
+        case T_DOUBLE:
+            size = sizeof(double);
+            break;
+        case T_STRING:
+            size = sizeof(char) * MAX_STRING;
+          break;
+        }
     union DataValue* args = malloc(size * nargs);
     return args;
 }
@@ -87,10 +119,36 @@ int match_up_flag(const Flag* flags, int nflags, char* s) {
     return -1;
 }
 
+void parse(union DataValue* value, enum DataType dtype, char* arg) {
+    switch (dtype) {
+    case T_CHAR: value->dv_char = arg[0];
+        break;
+    case T_UCHAR: value->dv_uchar = arg[0];
+        break;
+    case T_SHORT: value->dv_short = (short) atoi(arg);
+      break;
+    case T_USHORT: value->dv_ushort = (unsigned short) atoi(arg);
+      break;
+    case T_INT: value->dv_int = atoi(arg);
+      break;
+    case T_UINT: value->dv_uint = (unsigned int) atoi(arg);
+      break;
+    case T_LONG: value->dv_long = atol(arg); 
+      break;
+    case T_ULONG: value->dv_ulong = (unsigned long) atol(arg);
+      break;
+    case T_FLOAT: value->dv_float = atof(arg);
+      break;
+    case T_DOUBLE: value->dv_double = (double) atof(arg);
+      break;
+    case T_STRING: strcpy(value->dv_string, arg);
+      break;
+    }
+}
+
 void set_flag(Flag* flag, char* const args[]) {
     for(int i=0; i<flag->nargs; ++i) {
-        int x = atoi(args[i]);
-        flag->args[i].x = x;
+        parse(&flag->args[i], flag->dtype, args[i]);
     }
     return;
 }
