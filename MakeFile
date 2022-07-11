@@ -1,0 +1,8 @@
+test: main.o argparse.o
+	gcc -o test main.o argparse.o
+
+main.o: src/main.c include/argparse.h 
+	gcc -c src/main.c
+
+argparse.o: src/argparse.c include/argparse.h
+	gcc -c src/argparse.c
